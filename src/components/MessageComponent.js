@@ -1,7 +1,29 @@
 import React from 'react';
 var classNames = require('classnames');
 
-export default function MessageComponent({ selected, message }) {
+export default function MessageComponent({
+  selected,
+  message,
+  onMarkReadMessage,
+  onSelectMessage,
+  onDeselectMessage,
+  onStarMessage,
+  onUnstarMessage
+}) {
+  function onMarkReadMessageClick() {
+    onMarkReadMessage(message.id);
+  }
+  function onSelectMessageClick() {
+    onSelectMessage(message.id);
+  }
+  function onStarMessageClick(event) {
+    let $target = event.target;
+    console.log($target.type);
+    onStarMessage(message.id);
+  }
+  // function onUnstarMessageClick() {
+  //   onUnstarMessage(message.id);
+  // }
   let star;
   let labels = message.labels.map(i => {
     return (
@@ -34,14 +56,18 @@ export default function MessageComponent({ selected, message }) {
       <div className="col-xs-1">
         <div className="row">
           <div className="col-xs-2">
-            <input type="checkbox" checked="checked" />
+            <input
+              type="checkbox"
+              checked={'checked'}
+              onClick={onSelectMessageClick}
+            />
           </div>
           <div className="col-xs-2">
-            <i className={star} />
+            <i className={star} onClick={onStarMessageClick} />
           </div>
         </div>
       </div>
-      <div className="col-xs-11">
+      <div className="col-xs-11" onClick={onMarkReadMessageClick}>
         {labels}
         {message.subject}
       </div>

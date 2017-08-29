@@ -1,7 +1,6 @@
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import InboxPageLayout from './components/InboxPageLayout';
 import ToolbarComponent from './components/ToolbarComponent';
@@ -74,10 +73,29 @@ let data = [
   }
 ];
 
+function onMarkReadMessage(messageId) {
+  console.log(messageId);
+}
+function onSelectMessage(messageId) {
+  console.log(messageId);
+}
+function onDeselectMessage(messageId) {
+  console.log(messageId);
+}
+function onStarMessage(messageId) {
+  console.log(messageId);
+}
 ReactDOM.render(
   <InboxPageLayout messages={data} selectedMessageIds={[]}>
     <ToolbarComponent messages={data} selectedMessageCount={data.length} />
-    <MessagesComponent messages={data} selectedMessageIds={[]} />
+    <MessagesComponent
+      messages={data}
+      selectedMessageIds={[]}
+      onMarkReadMessage={onMarkReadMessage}
+      onSelectMessage={onSelectMessage}
+      onDeselectMessage={onDeselectMessage}
+      onStarMessage={onStarMessage}
+    />
     <ComposeFormComponent />
   </InboxPageLayout>,
   document.getElementById('root')

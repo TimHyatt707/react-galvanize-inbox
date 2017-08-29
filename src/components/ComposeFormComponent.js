@@ -9,7 +9,7 @@ export default function ComposeFormComponent({ props }) {
         </div>
       </div>
       <div className="form-group">
-        <label for="subject" className="col-sm-2 control-label">
+        <label htmlFor="subject" className="col-sm-2 control-label">
           Subject
         </label>
         <div className="col-sm-8">
@@ -23,7 +23,7 @@ export default function ComposeFormComponent({ props }) {
         </div>
       </div>
       <div className="form-group">
-        <label for="body" className="col-sm-2 control-label">
+        <label htmlFor="body" className="col-sm-2 control-label">
           Body
         </label>
         <div className="col-sm-8">
