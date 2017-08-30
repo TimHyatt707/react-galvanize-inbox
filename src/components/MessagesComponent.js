@@ -7,50 +7,33 @@ export default function MessagesComponent({
   onMarkReadMessage,
   onSelectMessage,
   onDeselectMessage,
-  onStarMessage
+  onStarMessage,
+  onUnstarMessage
 }) {
-  let selectedMessages = [];
-  for (let i = 0; i < messages.length; i++) {
-    for (let j = 0; j < selectedMessageIds.length; j++) {
-      if (messages[i].id === selectedMessageIds[j]) {
-        selectedMessages.push(messages[i]);
-      }
-    }
-  }
-  if (selectedMessages.length === 0) {
-    return (
-      <div>
-        {messages.map(message => {
-          return (
-            <MessageComponent
-              message={message}
-              selected={false}
-              key={message.id}
-              onMarkReadMessage={onMarkReadMessage}
-              onSelectMessage={onSelectMessage}
-              onDeselectMessage={onDeselectMessage}
-              onStarMessage={onStarMessage}
-            />
-          );
-        })}
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        {selectedMessages.map(x => {
-          return (
-            <MessageComponent
-              message={x}
-              selected={true}
-              onMarkReadMessage={onMarkReadMessage}
-              onSelectMessage={onSelectMessage}
-              onDeselectMessage={onDeselectMessage}
-              onStarMessage={onStarMessage}
-            />
-          );
-        })}
-      </div>
-    );
-  }
+  let selected;
+  return (
+    <div>
+      {messages.map(message => {
+        let index = selectedMessageIds.indexOf(message.id);
+        if (message.id === selectedMessageIds[index]) {
+          selected = true;
+        } else {
+          selected = false;
+        }
+        return (
+          <MessageComponent
+            message={message}
+            selected={selected}
+            key={message.id}
+            onMarkReadMessage={onMarkReadMessage}
+            onSelectMessage={onSelectMessage}
+            onDeselectMessage={onDeselectMessage}
+            onStarMessage={onStarMessage}
+            onUnstarMessage={onUnstarMessage}
+            selectedMessageIds={selectedMessageIds}
+          />
+        );
+      })}
+    </div>
+  );
 }

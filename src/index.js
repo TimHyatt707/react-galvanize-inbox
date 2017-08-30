@@ -7,6 +7,10 @@ import ToolbarComponent from './components/ToolbarComponent';
 import MessagesComponent from './components/MessagesComponent';
 import ComposeFormComponent from './components/ComposeFormComponent';
 
+let showComposeForm = null;
+const selectedMessageIds = [];
+let selectedMessageCount = 0;
+
 let data = [
   {
     id: 1,
@@ -74,30 +78,167 @@ let data = [
 ];
 
 function onMarkReadMessage(messageId) {
-  console.log(messageId);
+  if (data[messageId - 1].read === false) {
+    data[messageId - 1].read = true;
+    renderApp();
+  }
 }
 function onSelectMessage(messageId) {
-  console.log(messageId);
+  let index = selectedMessageIds.indexOf(messageId);
+  if (selectedMessageIds[index]) {
+    return false;
+  } else {
+    selectedMessageIds.push(messageId);
+    selectedMessageCount++;
+    renderApp();
+  }
 }
 function onDeselectMessage(messageId) {
-  console.log(messageId);
+  let index = selectedMessageIds.indexOf(messageId);
+  selectedMessageIds.splice(index, 1);
+  selectedMessageCount--;
+  renderApp();
 }
 function onStarMessage(messageId) {
-  console.log(messageId);
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id === messageId) {
+      data[i].starred = true;
+      renderApp();
+    }
+  }
 }
-ReactDOM.render(
-  <InboxPageLayout messages={data} selectedMessageIds={[]}>
-    <ToolbarComponent messages={data} selectedMessageCount={data.length} />
-    <MessagesComponent
-      messages={data}
-      selectedMessageIds={[]}
-      onMarkReadMessage={onMarkReadMessage}
-      onSelectMessage={onSelectMessage}
-      onDeselectMessage={onDeselectMessage}
-      onStarMessage={onStarMessage}
-    />
-    <ComposeFormComponent />
-  </InboxPageLayout>,
-  document.getElementById('root')
-);
+
+function onUnstarMessage(messageId) {
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id === messageId) {
+      data[i].starred = false;
+      renderApp();
+    }
+  }
+}
+
+function onOpenComposeForm() {
+  showComposeForm = true;
+  renderApp();
+}
+
+function onSelectAllMessages() {
+  for (let i = 0; i < data.length; i++) {
+    data[i].selected = true;
+    onSelectMessage(data[i].id);
+  }
+  renderApp();
+}
+
+function onDeselectAllMessages() {
+  for (let i = 0; i < data.length; i++) {
+    data[i].selected = false;
+    onDeselectMessage(data[i].id);
+  }
+  renderApp();
+}
+
+function onMarkAsReadSelectedMessages() {
+  for (let i = 0; i < data.length; i++) {
+    let index = selectedMessageIds.indexOf(data[i].id);
+    if (data[i].id === selectedMessageIds[index]) {
+      data[i].read = true;
+      data[i].unread = false;
+    }
+  }
+  renderApp();
+}
+
+function onMarkAsUnreadSelectedMessages() {
+  for (let i = 0; i < data.length; i++) {
+    let index = selectedMessageIds.indexOf(data[i].id);
+    if (data[i].id === selectedMessageIds[index]) {
+      data[i].unread = true;
+      data[i].read = false;
+    }
+  }
+  renderApp();
+}
+
+function onApplyLabelSelectedMessages(label) {
+  for (let i = 0; i < data.length; i++) {
+    let index = selectedMessageIds.indexOf(data[i].id);
+    if (data[i].id === selectedMessageIds[index]) {
+      data[i].labels.push(label);
+    }
+  }
+  renderApp();
+}
+
+function onRemoveLabelSelectedMessages(label) {
+  for (let i = 0; i < data.length; i++) {
+    let index = selectedMessageIds.indexOf(data[i].id);
+    if (data[i].id === selectedMessageIds[index]) {
+      let labelIndex = data[i].labels.indexOf(label);
+      data[i].labels.splice(labelIndex, 1);
+    }
+  }
+  renderApp();
+}
+
+function onDeleteSelectedMessages() {
+  for (let i = 0; i < data.length; i++) {
+    let index = selectedMessageIds.indexOf(data[i].id);
+    if (data[i].id === selectedMessageIds[index]) {
+      data.splice(i, 1);
+    }
+  }
+  console.log(data);
+  renderApp();
+}
+
+function onSubmit(subject, body) {
+  console.log(onSubmit);
+  let newMsg = {};
+  newMsg.id = data.length + 1;
+  newMsg.subject = subject;
+  newMsg.labels = [];
+  data.push(newMsg);
+  renderApp();
+}
+
+function onCancel() {
+  showComposeForm = null;
+  renderApp();
+}
+
+function renderApp() {
+  ReactDOM.render(
+    <InboxPageLayout messages={data} selectedMessageIds={selectedMessageIds}>
+      <ToolbarComponent
+        messages={data}
+        selectedMessageCount={selectedMessageCount}
+        onOpenComposeForm={onOpenComposeForm}
+        onSelectAllMessages={onSelectAllMessages}
+        onDeselectAllMessages={onDeselectAllMessages}
+        onMarkAsReadSelectedMessages={onMarkAsReadSelectedMessages}
+        onMarkAsUnreadSelectedMessages={onMarkAsUnreadSelectedMessages}
+        onApplyLabelSelectedMessages={onApplyLabelSelectedMessages}
+        onRemoveLabelSelectedMessages={onRemoveLabelSelectedMessages}
+        onDeleteSelectedMessages={onDeleteSelectedMessages}
+      />
+      <MessagesComponent
+        messages={data}
+        selectedMessageIds={selectedMessageIds}
+        onMarkReadMessage={onMarkReadMessage}
+        onSelectMessage={onSelectMessage}
+        onDeselectMessage={onDeselectMessage}
+        onStarMessage={onStarMessage}
+        onUnstarMessage={onUnstarMessage}
+      />
+      <ComposeFormComponent
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        showComposeForm={showComposeForm}
+      />
+    </InboxPageLayout>,
+    document.getElementById('root')
+  );
+}
+renderApp();
 registerServiceWorker();

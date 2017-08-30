@@ -8,36 +8,54 @@ export default function MessageComponent({
   onSelectMessage,
   onDeselectMessage,
   onStarMessage,
-  onUnstarMessage
+  onUnstarMessage,
+  selectedMessageIds
 }) {
   function onMarkReadMessageClick() {
     onMarkReadMessage(message.id);
   }
-  function onSelectMessageClick() {
-    onSelectMessage(message.id);
+  function onSelectMessageClick(event) {
+    const $checkbox = event.target;
+    if ($checkbox.checked) {
+      onSelectMessage(message.id);
+    } else {
+      onDeselectMessage(message.id);
+    }
   }
-  function onStarMessageClick(event) {
-    let $target = event.target;
-    console.log($target.type);
-    onStarMessage(message.id);
+  function onStarMessageClick() {
+    if (message.starred) {
+      onUnstarMessage(message.id);
+    } else {
+      onStarMessage(message.id);
+    }
   }
   // function onUnstarMessageClick() {
   //   onUnstarMessage(message.id);
   // }
   let star;
+  let classes;
   let labels = message.labels.map(i => {
     return (
-      <span className="label label-warning">
+      <span className="label label-warning" key={i}>
         {i}
       </span> || ''
     );
   });
-  let classes = classNames({
-    row: true,
-    message: true,
-    read: message.read,
-    selected: selected
-  });
+  if (message.read) {
+    classes = classNames({
+      row: true,
+      message: true,
+      read: message.read,
+      selected: selected
+    });
+  } else {
+    classes = classNames({
+      row: true,
+      message: true,
+      unread: true,
+      selected: selected
+    });
+  }
   if (message.starred) {
     star = classNames({
       star: true,
@@ -56,11 +74,7 @@ export default function MessageComponent({
       <div className="col-xs-1">
         <div className="row">
           <div className="col-xs-2">
-            <input
-              type="checkbox"
-              checked={'checked'}
-              onClick={onSelectMessageClick}
-            />
+            <input type="checkbox" onClick={onSelectMessageClick} />
           </div>
           <div className="col-xs-2">
             <i className={star} onClick={onStarMessageClick} />
