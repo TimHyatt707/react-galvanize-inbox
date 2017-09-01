@@ -41,7 +41,14 @@ export default function ToolbarComponent({
   function onDeleteSelectedMessagesHandler() {
     onDeleteSelectedMessages();
   }
+  function onOpenComposeFormHandler() {
+    onOpenComposeForm();
+  }
+  console.log('selectedMessageCount:', selectedMessageCount);
+  console.log('messages.length:', messages.length);
+
   if (messages.length === selectedMessageCount && messages.length >= 1) {
+    console.log(selectedMessageCount);
     classes = classNames({
       fa: true,
       'fa-check-square-o': true
@@ -99,7 +106,7 @@ export default function ToolbarComponent({
           <span className="badge badge" />
           {counter} unread messages
         </p>
-        <a className="btn btn-danger" onClick={onOpenComposeForm}>
+        <a className="btn btn-danger" onClick={onOpenComposeFormHandler}>
           <i className="fa fa-plus" />
         </a>
 
