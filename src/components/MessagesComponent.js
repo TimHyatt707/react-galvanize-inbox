@@ -11,18 +11,22 @@ export default function MessagesComponent({
   onUnstarMessage
 }) {
   let selected;
+  let checked;
   return (
     <div>
       {messages.map(message => {
         let index = selectedMessageIds.indexOf(message.id);
         if (message.id === selectedMessageIds[index]) {
           selected = true;
+          checked = true;
         } else {
           selected = false;
+          checked = false;
         }
         return (
           <MessageComponent
             message={message}
+            checked={checked}
             selected={selected}
             key={message.id}
             onMarkReadMessage={onMarkReadMessage}

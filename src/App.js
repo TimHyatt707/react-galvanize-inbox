@@ -73,6 +73,7 @@ export default class App extends React.Component {
     }
   }
   _onSelectMessage(messageId) {
+    console.log('selectedmessagefunction');
     let index = this.state.selectedMessageIds.indexOf(messageId);
     if (this.state.selectedMessageIds[index]) {
       return false;
@@ -121,15 +122,19 @@ export default class App extends React.Component {
 
   _onSelectAllMessages() {
     for (let i = 0; i < this.state.messages.length; i++) {
-      if (this.state.messages[i].selected === false)
+      if (!this.state.messages[i].selected) {
         this._onSelectMessage(this.state.messages[i].id);
+        this.render();
+      }
     }
   }
   _onDeselectAllMessages() {
     this.setState({ selectedMessageCount: 0 });
     for (let i = 0; i < this.state.messages.length; i++) {
-      if (this.state.messages[i].selected === true)
+      if (this.state.messages[i].selected) {
         this._onDeselectMessage(this.state.messages[i].id);
+        this.render();
+      }
     }
   }
 

@@ -48,7 +48,6 @@ export default function ToolbarComponent({
   console.log('messages.length:', messages.length);
 
   if (messages.length === selectedMessageCount && messages.length >= 1) {
-    console.log(selectedMessageCount);
     classes = classNames({
       fa: true,
       'fa-check-square-o': true

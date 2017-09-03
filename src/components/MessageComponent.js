@@ -4,6 +4,7 @@ var classNames = require('classnames');
 export default function MessageComponent({
   selected,
   message,
+  checked,
   onMarkReadMessage,
   onSelectMessage,
   onDeselectMessage,
@@ -74,7 +75,11 @@ export default function MessageComponent({
       <div className="col-xs-1">
         <div className="row">
           <div className="col-xs-2">
-            <input type="checkbox" onClick={onSelectMessageClick} />
+            <input
+              type="checkbox"
+              checked={checked}
+              onClick={onSelectMessageClick}
+            />
           </div>
           <div className="col-xs-2">
             <i className={star} onClick={onStarMessageClick} />
