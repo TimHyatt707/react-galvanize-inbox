@@ -121,21 +121,26 @@ export default class App extends React.Component {
   }
 
   _onSelectAllMessages() {
+    const value = this.state.selectedMessageIds;
+    let num = this.state.selectedMessageCount;
+    num = this.state.messages.length;
     for (let i = 0; i < this.state.messages.length; i++) {
       if (!this.state.messages[i].selected) {
-        this._onSelectMessage(this.state.messages[i].id);
-        this.render();
+        value.push(this.state.messages[i].id);
       }
     }
+    this.setState({
+      selectedMessageIds: value,
+      selectedMessageCount: num
+    });
   }
   _onDeselectAllMessages() {
-    this.setState({ selectedMessageCount: 0 });
-    for (let i = 0; i < this.state.messages.length; i++) {
-      if (this.state.messages[i].selected) {
-        this._onDeselectMessage(this.state.messages[i].id);
-        this.render();
-      }
-    }
+    const num = 0;
+    const value = [];
+    this.setState({
+      selectedMessageIds: value,
+      selectedMessageCount: num
+    });
   }
 
   _onMarkAsReadSelectedMessages() {
