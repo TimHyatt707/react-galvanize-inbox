@@ -44,8 +44,6 @@ export default function ToolbarComponent({
   function onOpenComposeFormHandler() {
     onOpenComposeForm();
   }
-  console.log('selectedMessageCount:', selectedMessageCount);
-  console.log('messages.length:', messages.length);
 
   if (messages.length === selectedMessageCount) {
     classes = classNames({

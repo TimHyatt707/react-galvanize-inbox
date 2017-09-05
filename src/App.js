@@ -2,6 +2,9 @@ import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import getMessages from './api/getMessages';
+import updateMessage from './api/updateMessage';
+import deleteMessage from './api/deleteMessage';
+import createMessage from './api/createMessage';
 import InboxPageLayout from './components/InboxPageLayout';
 import ToolbarComponent from './components/ToolbarComponent';
 import MessagesComponent from './components/MessagesComponent';
@@ -19,7 +22,6 @@ export default class App extends React.Component {
     getMessages().then(records => this.setState({ messages: records }));
   }
   render() {
-    console.log('index selectedMessageCount:', this.state.selectedMessageCount);
     return (
       <InboxPageLayout
         messages={this.state.messages}
@@ -73,7 +75,6 @@ export default class App extends React.Component {
     }
   }
   _onSelectMessage(messageId) {
-    console.log('selectedmessagefunction');
     let index = this.state.selectedMessageIds.indexOf(messageId);
     if (this.state.selectedMessageIds[index]) {
       return false;
@@ -100,7 +101,13 @@ export default class App extends React.Component {
       if (this.state.messages[i].id === messageId) {
         const value = this.state.messages;
         value[i].starred = true;
+        let obj = {};
+        obj.read = this.state.messages[i].read;
+        obj.starred = value[i].starred;
+        obj.subject = value[i].subject;
+        obj.body = value[i].body;
         this.setState({ messages: value });
+        updateMessage(this.state.messages[i].id, obj);
       }
     }
   }
@@ -110,7 +117,13 @@ export default class App extends React.Component {
       if (this.state.messages[i].id === messageId) {
         const value = this.state.messages;
         value[i].starred = false;
+        let obj = {};
+        obj.read = this.state.messages[i].read;
+        obj.starred = value[i].starred;
+        obj.subject = value[i].subject;
+        obj.body = value[i].body;
         this.setState({ messages: value });
+        updateMessage(this.state.messages[i].id, obj);
       }
     }
   }
@@ -151,7 +164,13 @@ export default class App extends React.Component {
       if (this.state.messages[i].id === this.state.selectedMessageIds[index]) {
         const value = this.state.messages;
         value[i].read = true;
-        value[i].unread = false;
+        // value[i].unread = false;
+        let obj = {};
+        obj.read = this.state.messages[i].read;
+        obj.starred = value[i].starred;
+        obj.subject = value[i].subject;
+        obj.body = value[i].body;
+        updateMessage(this.state.messages[i].id, obj);
         this.setState({ messages: value });
       }
     }
@@ -165,7 +184,13 @@ export default class App extends React.Component {
       if (this.state.messages[i].id === this.state.selectedMessageIds[index]) {
         const value = this.state.messages;
         value[i].read = false;
-        value[i].unread = true;
+        let obj = {};
+        obj.read = this.state.messages[i].read;
+        obj.starred = value[i].starred;
+        obj.subject = value[i].subject;
+        obj.body = value[i].body;
+        // value[i].unread = true;
+        updateMessage(this.state.messages[i].id, obj);
         this.setState({ messages: value });
       }
     }
@@ -178,8 +203,15 @@ export default class App extends React.Component {
       );
       if (this.state.messages[i].id === this.state.selectedMessageIds[index]) {
         const value = this.state.messages;
+        let obj = {};
+        obj.read = this.state.messages[i].read;
+        obj.starred = this.state.messages[i].starred;
+        obj.subject = this.state.messages[i].subject;
+        obj.body = this.state.messages[i].body;
         value[i].labels.push(label);
+        obj.labels = value[i].labels.join(',');
         this.setState({ messages: value });
+        updateMessage(value[i].id, obj);
       }
     }
   }
@@ -193,7 +225,14 @@ export default class App extends React.Component {
         let labelIndex = this.state.messages[i].labels.indexOf(label);
         const value = this.state.messages;
         value[i].labels.splice(labelIndex, 1);
+        let obj = {};
+        obj.read = this.state.messages[i].read;
+        obj.starred = this.state.messages[i].starred;
+        obj.subject = this.state.messages[i].subject;
+        obj.body = this.state.messages[i].body;
+        obj.labels = value[i].labels.join(',');
         this.setState({ messages: value });
+        updateMessage(this.state.messages[i].id, obj);
       }
     }
   }
@@ -207,6 +246,7 @@ export default class App extends React.Component {
         const value = this.state.messages;
         value.splice(i, 1);
         this.setState({ messages: value });
+        deleteMessage(this.state.messages[i].id);
       }
     }
   }
@@ -214,10 +254,12 @@ export default class App extends React.Component {
   _onSubmit(subject, body) {
     const value = this.state.messages;
     let newMsg = {};
-    newMsg.id = this.state.messages.length + 1;
     newMsg.subject = subject;
-    newMsg.body = body;
-    newMsg.labels = [];
+    newMsg.labels = '';
+    // createMessage(newMsg).then(record => {
+    //   value.push(newMsg);
+    // });
+    createMessage(newMsg);
     value.push(newMsg);
     this.setState({ messages: value });
   }

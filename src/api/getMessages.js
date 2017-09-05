@@ -1,5 +1,5 @@
 export default function getMessages() {
-  return fetch('https://api.airtable.com/v0/appdEqtHieMx3kSAu/Table%201?', {
+  return fetch('https://api.airtable.com/v0/appdEqtHieMx3kSAu/messages?', {
     method: 'GET',
     headers: {
       Authorization: 'Bearer keyZjFgCqHqPR1F8o'
@@ -10,6 +10,9 @@ export default function getMessages() {
     })
     .then(data => {
       return data.records.map(record => {
+        if (!record.fields.labels) {
+          record.fields.labels = '';
+        }
         return {
           id: record.id,
           body: record.fields.body,
