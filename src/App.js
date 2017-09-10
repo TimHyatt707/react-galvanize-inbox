@@ -256,11 +256,9 @@ export default class App extends React.Component {
     let newMsg = {};
     newMsg.subject = subject;
     newMsg.labels = '';
-    // createMessage(newMsg).then(record => {
-    //   value.push(newMsg);
-    // });
-    createMessage(newMsg);
-    value.push(newMsg);
+    createMessage(newMsg).then(record => {
+      value.push(newMsg);
+    });
     this.setState({ messages: value });
   }
 
