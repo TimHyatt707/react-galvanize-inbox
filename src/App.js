@@ -155,71 +155,61 @@ export default class App extends React.Component {
   }
 
   _onApplyLabelSelectedMessages(label) {
+    let array = this.state.messages;
     for (let i = 0; i < this.state.messages.length; i++) {
       let index = this.state.selectedMessageIds.indexOf(
         this.state.messages[i].id
       );
       if (this.state.messages[i].id === this.state.selectedMessageIds[index]) {
-        const value = this.state.messages;
         let obj = {};
-        obj.read = this.state.messages[i].read;
-        obj.starred = this.state.messages[i].starred;
-        obj.subject = this.state.messages[i].subject;
-        obj.body = this.state.messages[i].body;
-        value[i].labels.push(label);
-        obj.labels = value[i].labels.join(',');
-        this.setState({ messages: value });
-        updateMessage(value[i].id, obj);
+        array[i].labels.push(label);
+        obj.labels = array[i].labels.join(',');
+        updateMessage(array[i].id, obj);
       }
     }
+    this.props.store.dispatch({ type: 'ON_APPLY_LABEL', array });
   }
 
   _onRemoveLabelSelectedMessages(label) {
+    let array = this.state.messages;
     for (let i = 0; i < this.state.messages.length; i++) {
       let index = this.state.selectedMessageIds.indexOf(
         this.state.messages[i].id
       );
       if (this.state.messages[i].id === this.state.selectedMessageIds[index]) {
-        let labelIndex = this.state.messages[i].labels.indexOf(label);
-        const value = this.state.messages;
-        value[i].labels.splice(labelIndex, 1);
         let obj = {};
-        obj.read = this.state.messages[i].read;
-        obj.starred = this.state.messages[i].starred;
-        obj.subject = this.state.messages[i].subject;
-        obj.body = this.state.messages[i].body;
-        obj.labels = value[i].labels.join(',');
-        this.setState({ messages: value });
-        updateMessage(this.state.messages[i].id, obj);
+        let labelIndex = this.state.messages[i].labels.indexOf(label);
+        array[i].labels.splice(labelIndex, 1);
+        obj.labels = array[i].labels.join(',');
+        updateMessage(array[i].id, obj);
       }
     }
+    this.props.store.dispatch({ type: 'ON_REMOVE_LABEL', array });
   }
 
   _onDeleteSelectedMessages() {
+    let array = this.state.messages;
     for (let i = 0; i < this.state.messages.length; i++) {
       let index = this.state.selectedMessageIds.indexOf(
         this.state.messages[i].id
       );
       if (this.state.messages[i].id === this.state.selectedMessageIds[index]) {
-        const value = this.state.messages;
-        value.splice(i, 1);
-        this.setState({ messages: value });
+        array.splice(i, 1);
         deleteMessage(this.state.messages[i].id);
       }
     }
+    this.props.store.dispatch({ type: 'ON_DELETE_MESSAGE', array });
   }
   _onOpenComposeForm() {
     this.props.store.dispatch({ type: 'OPEN_FORM' });
   }
   _onSubmit(subject, body) {
-    const value = this.state.messages;
     let newMsg = {};
     newMsg.subject = subject;
     newMsg.labels = '';
-    createMessage(newMsg).then(record => {
-      value.push(newMsg);
+    createMessage(newMsg).then(message => {
+      this.props.store.dispatch({ type: 'ON_CREATE_MESSAGE', message });
     });
-    this.setState({ messages: value });
   }
 
   _onCancel() {

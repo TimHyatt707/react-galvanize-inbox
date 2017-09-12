@@ -20,7 +20,7 @@ export default function createMessage(message) {
         subject: record.fields.subject,
         read: record.fields.read,
         starred: record.fields.starred,
-        labels: record.fields.labels.split(',')
+        labels: []
       };
     });
 }

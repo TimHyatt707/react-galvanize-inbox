@@ -22,7 +22,10 @@ export default function rootReducer(
       let selectCounter = currentState.selectedMessageCount;
       return {
         ...currentState,
-        selectedMessageIds: [...currentState, action.messageId],
+        selectedMessageIds: [
+          ...currentState.selectedMessageIds,
+          action.messageId
+        ],
         selectedMessageCount: selectCounter + 1
       };
     case 'ON_DESELECT':
@@ -81,6 +84,26 @@ export default function rootReducer(
       return {
         ...currentState,
         messages: action.array
+      };
+    case 'ON_APPLY_LABEL':
+      return {
+        ...currentState,
+        messages: action.array
+      };
+    case 'ON_REMOVE_LABEL':
+      return {
+        ...currentState,
+        messages: action.array
+      };
+    case 'ON_DELETE_MESSAGE':
+      return {
+        ...currentState,
+        messages: action.array
+      };
+    case 'ON_CREATE_MESSAGE':
+      return {
+        ...currentState,
+        messages: [...currentState.messages, action.message]
       };
     default:
       return currentState;
