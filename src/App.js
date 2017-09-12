@@ -1,5 +1,4 @@
 import React from 'react';
-// import logo from './logo.svg';
 import './App.css';
 import getMessages from './api/getMessages';
 import updateMessage from './api/updateMessage';
@@ -11,15 +10,22 @@ import MessagesComponent from './components/MessagesComponent';
 import ComposeFormComponent from './components/ComposeFormComponent';
 
 export default class App extends React.Component {
-  state = {
-    messages: [],
-    showComposeForm: null,
-    selectedMessageIds: [],
-    selectedMessageCount: 0
-  };
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      messages: [],
+      showComposeForm: null,
+      selectedMessageIds: [],
+      selectedMessageCount: 0
+    };
+    this.props.store.subscribe(() => {
+      this.setState(this.props.store.getState());
+    });
+  }
   componentDidMount() {
-    getMessages().then(records => this.setState({ messages: records }));
+    getMessages().then(messages =>
+      this.props.store.dispatch({ type: 'SET_MESSAGES', messages })
+    );
   }
   render() {
     return (
@@ -65,135 +71,87 @@ export default class App extends React.Component {
   }
 
   _onMarkReadMessage(messageId) {
-    for (let i = 0; i < this.state.messages.length; i++) {
-      if (this.state.messages[i].id === messageId) {
-        const value = this.state.messages;
-        value[i].read = true;
-        this.setState({ messages: value });
-        this.render();
-      }
-    }
+    let updatedMessage = {};
+    updatedMessage.read = true;
+    updateMessage.id = messageId;
+    updateMessage(messageId, updatedMessage).then(message => {
+      this.props.store.dispatch({ type: 'ON_MARK_READ', message });
+    });
   }
   _onSelectMessage(messageId) {
-    let index = this.state.selectedMessageIds.indexOf(messageId);
-    if (this.state.selectedMessageIds[index]) {
-      return false;
-    } else {
-      const value = this.state.selectedMessageIds;
-      let num = this.state.selectedMessageCount;
-      num++;
-      value.push(messageId);
-      this.setState({ selectedMessageIds: value });
-      this.setState({ selectedMessageCount: num });
+    for (let i = 0; i < this.state.messages.length; i++) {
+      if (
+        this.state.messages[i].id === messageId &&
+        this.state.selectedMessageIds.indexOf(messageId) === -1
+      ) {
+        this.props.store.dispatch({ type: 'ON_SELECT', messageId });
+      }
     }
   }
   _onDeselectMessage(messageId) {
-    let index = this.state.selectedMessageIds.indexOf(messageId);
-    const value = this.state.selectedMessageIds;
-    let num = this.state.selectedMessageCount;
-    value.splice(index, 1);
-    num--;
-    this.setState({ selectedMessageIds: value });
-    this.setState({ selectedMessageCount: num });
-  }
-  _onStarMessage(messageId) {
     for (let i = 0; i < this.state.messages.length; i++) {
       if (this.state.messages[i].id === messageId) {
-        const value = this.state.messages;
-        value[i].starred = true;
-        let obj = {};
-        obj.read = this.state.messages[i].read;
-        obj.starred = value[i].starred;
-        obj.subject = value[i].subject;
-        obj.body = value[i].body;
-        this.setState({ messages: value });
-        updateMessage(this.state.messages[i].id, obj);
+        this.props.store.dispatch({ type: 'ON_DESELECT', messageId });
       }
     }
+  }
+  _onStarMessage(messageId) {
+    let updatedMessage = {};
+    updatedMessage.starred = true;
+    updateMessage.id = messageId;
+    updateMessage(messageId, updatedMessage).then(message => {
+      this.props.store.dispatch({ type: 'ON_STAR', message });
+    });
   }
 
   _onUnstarMessage(messageId) {
-    for (let i = 0; i < this.state.messages.length; i++) {
-      if (this.state.messages[i].id === messageId) {
-        const value = this.state.messages;
-        value[i].starred = false;
-        let obj = {};
-        obj.read = this.state.messages[i].read;
-        obj.starred = value[i].starred;
-        obj.subject = value[i].subject;
-        obj.body = value[i].body;
-        this.setState({ messages: value });
-        updateMessage(this.state.messages[i].id, obj);
-      }
-    }
-  }
-
-  _onOpenComposeForm() {
-    const val = true;
-    this.setState({ showComposeForm: val });
-  }
-
-  _onSelectAllMessages() {
-    const value = this.state.selectedMessageIds;
-    let num = this.state.selectedMessageCount;
-    num = this.state.messages.length;
-    for (let i = 0; i < this.state.messages.length; i++) {
-      if (!this.state.messages[i].selected) {
-        value.push(this.state.messages[i].id);
-      }
-    }
-    this.setState({
-      selectedMessageIds: value,
-      selectedMessageCount: num
+    let updatedMessage = {};
+    updatedMessage.starred = false;
+    updateMessage.id = messageId;
+    updateMessage(messageId, updatedMessage).then(message => {
+      this.props.store.dispatch({ type: 'ON_STAR', message });
     });
+  }
+  _onSelectAllMessages() {
+    let array = [];
+    for (let i = 0; i < this.state.messages.length; i++) {
+      array.push(this.state.messages[i].id);
+    }
+    this.props.store.dispatch({ type: 'ON_SELECT_ALL', array });
   }
   _onDeselectAllMessages() {
-    const num = 0;
-    const value = [];
-    this.setState({
-      selectedMessageIds: value,
-      selectedMessageCount: num
-    });
+    this.props.store.dispatch({ type: 'ON_DESELECT_ALL' });
   }
-
   _onMarkAsReadSelectedMessages() {
+    let array = this.state.messages;
     for (let i = 0; i < this.state.messages.length; i++) {
       let index = this.state.selectedMessageIds.indexOf(
         this.state.messages[i].id
       );
       if (this.state.messages[i].id === this.state.selectedMessageIds[index]) {
-        const value = this.state.messages;
-        value[i].read = true;
-        // value[i].unread = false;
         let obj = {};
-        obj.read = this.state.messages[i].read;
-        obj.starred = value[i].starred;
-        obj.subject = value[i].subject;
-        obj.body = value[i].body;
+        array[i].read = true;
+        obj.read = true;
         updateMessage(this.state.messages[i].id, obj);
-        this.setState({ messages: value });
       }
     }
+    this.props.store.dispatch({ type: 'ON_MARK_READ_SELECTED', array });
   }
 
   _onMarkAsUnreadSelectedMessages() {
+    let array = this.state.messages;
     for (let i = 0; i < this.state.messages.length; i++) {
       let index = this.state.selectedMessageIds.indexOf(
         this.state.messages[i].id
       );
       if (this.state.messages[i].id === this.state.selectedMessageIds[index]) {
-        const value = this.state.messages;
-        value[i].read = false;
         let obj = {};
-        obj.read = this.state.messages[i].read;
-        obj.starred = value[i].starred;
-        obj.subject = value[i].subject;
-        obj.body = value[i].body;
-        // value[i].unread = true;
+        array[i].read = false;
+        obj.read = false;
         updateMessage(this.state.messages[i].id, obj);
-        this.setState({ messages: value });
       }
     }
+    this.props.store.dispatch({ type: 'ON_MARK_UNREAD_SELECTED', array });
   }
 
   _onApplyLabelSelectedMessages(label) {
@@ -250,7 +208,9 @@ export default class App extends React.Component {
       }
     }
   }
-
+  _onOpenComposeForm() {
+    this.props.store.dispatch({ type: 'OPEN_FORM' });
+  }
   _onSubmit(subject, body) {
     const value = this.state.messages;
     let newMsg = {};
@@ -263,6 +223,6 @@ export default class App extends React.Component {
   }
 
   _onCancel() {
-    this.setState({ showComposeForm: null });
+    this.props.store.dispatch({ type: 'CLOSE_FORM' });
   }
 }
