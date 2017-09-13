@@ -1,9 +1,15 @@
 import React from 'react';
 import './App.css';
-import getMessages from './api/getMessages';
-import updateMessage from './api/updateMessage';
-import deleteMessage from './api/deleteMessage';
-import createMessage from './api/createMessage';
+import getMessagesProcess from './redux/thunks/getMessagesProcess';
+import markAsReadProcess from './redux/thunks/markAsReadProcess';
+import onStarProcess from './redux/thunks/onStarProcess';
+import onUnstarProcess from './redux/thunks/onUnstarProcess';
+import onMarkAsReadProcess from './redux/thunks/onMarkAsReadProcess';
+import onMarkAsUnreadProcess from './redux/thunks/onMarkAsUnreadProcess';
+import onApplyLabelProcess from './redux/thunks/onApplyLabelProcess';
+import onRemoveLabelProcess from './redux/thunks/onRemoveLabelProcess';
+import DeleteMessageProcess from './redux/thunks/DeleteMessageProcess';
+import createMessageProcess from './redux/thunks/createMessageProcess';
 import InboxPageLayout from './components/InboxPageLayout';
 import ToolbarComponent from './components/ToolbarComponent';
 import MessagesComponent from './components/MessagesComponent';
@@ -23,9 +29,7 @@ export default class App extends React.Component {
     });
   }
   componentDidMount() {
-    getMessages().then(messages =>
-      this.props.store.dispatch({ type: 'SET_MESSAGES', messages })
-    );
+    this.props.store.dispatch(getMessagesProcess());
   }
   render() {
     return (
@@ -73,10 +77,8 @@ export default class App extends React.Component {
   _onMarkReadMessage(messageId) {
     let updatedMessage = {};
     updatedMessage.read = true;
-    updateMessage.id = messageId;
-    updateMessage(messageId, updatedMessage).then(message => {
-      this.props.store.dispatch({ type: 'ON_MARK_READ', message });
-    });
+    // updatedMessage.id = messageId;
+    this.props.store.dispatch(markAsReadProcess(messageId, updatedMessage));
   }
   _onSelectMessage(messageId) {
     for (let i = 0; i < this.state.messages.length; i++) {
@@ -98,19 +100,13 @@ export default class App extends React.Component {
   _onStarMessage(messageId) {
     let updatedMessage = {};
     updatedMessage.starred = true;
-    updateMessage.id = messageId;
-    updateMessage(messageId, updatedMessage).then(message => {
-      this.props.store.dispatch({ type: 'ON_STAR', message });
-    });
+    this.props.store.dispatch(onStarProcess(messageId, updatedMessage));
   }
 
   _onUnstarMessage(messageId) {
     let updatedMessage = {};
     updatedMessage.starred = false;
-    updateMessage.id = messageId;
-    updateMessage(messageId, updatedMessage).then(message => {
-      this.props.store.dispatch({ type: 'ON_STAR', message });
-    });
+    this.props.store.dispatch(onUnstarProcess(messageId, updatedMessage));
   }
   _onSelectAllMessages() {
     let array = [];
@@ -132,10 +128,11 @@ export default class App extends React.Component {
         let obj = {};
         array[i].read = true;
         obj.read = true;
-        updateMessage(this.state.messages[i].id, obj);
+        this.props.store.dispatch(
+          onMarkAsReadProcess(this.state.messages[i].id, obj)
+        );
       }
     }
-    this.props.store.dispatch({ type: 'ON_MARK_READ_SELECTED', array });
   }
 
   _onMarkAsUnreadSelectedMessages() {
@@ -148,10 +145,11 @@ export default class App extends React.Component {
         let obj = {};
         array[i].read = false;
         obj.read = false;
-        updateMessage(this.state.messages[i].id, obj);
+        this.props.store.dispatch(
+          onMarkAsUnreadProcess(this.state.messages[i].id, obj)
+        );
       }
     }
-    this.props.store.dispatch({ type: 'ON_MARK_UNREAD_SELECTED', array });
   }
 
   _onApplyLabelSelectedMessages(label) {
@@ -164,10 +162,9 @@ export default class App extends React.Component {
         let obj = {};
         array[i].labels.push(label);
         obj.labels = array[i].labels.join(',');
-        updateMessage(array[i].id, obj);
+        this.props.store.dispatch(onApplyLabelProcess(array[i].id, obj));
       }
     }
-    this.props.store.dispatch({ type: 'ON_APPLY_LABEL', array });
   }
 
   _onRemoveLabelSelectedMessages(label) {
@@ -181,24 +178,22 @@ export default class App extends React.Component {
         let labelIndex = this.state.messages[i].labels.indexOf(label);
         array[i].labels.splice(labelIndex, 1);
         obj.labels = array[i].labels.join(',');
-        updateMessage(array[i].id, obj);
+        this.props.store.dispatch(onRemoveLabelProcess(array[i].id, obj));
       }
     }
-    this.props.store.dispatch({ type: 'ON_REMOVE_LABEL', array });
   }
 
   _onDeleteSelectedMessages() {
-    let array = this.state.messages;
     for (let i = 0; i < this.state.messages.length; i++) {
       let index = this.state.selectedMessageIds.indexOf(
         this.state.messages[i].id
       );
       if (this.state.messages[i].id === this.state.selectedMessageIds[index]) {
-        array.splice(i, 1);
-        deleteMessage(this.state.messages[i].id);
+        this.props.store.dispatch(
+          DeleteMessageProcess(this.state.messages[i].id)
+        );
       }
     }
-    this.props.store.dispatch({ type: 'ON_DELETE_MESSAGE', array });
   }
   _onOpenComposeForm() {
     this.props.store.dispatch({ type: 'OPEN_FORM' });
@@ -206,10 +201,8 @@ export default class App extends React.Component {
   _onSubmit(subject, body) {
     let newMsg = {};
     newMsg.subject = subject;
-    newMsg.labels = '';
-    createMessage(newMsg).then(message => {
-      this.props.store.dispatch({ type: 'ON_CREATE_MESSAGE', message });
-    });
+    newMsg.body = body;
+    this.props.store.dispatch(createMessageProcess(newMsg));
   }
 
   _onCancel() {

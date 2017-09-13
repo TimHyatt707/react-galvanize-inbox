@@ -39,7 +39,7 @@ export default function MessageComponent({
     return (
       <span className="label label-warning" key={i}>
         {i}
-      </span> || ''
+      </span>
     );
   });
   if (message.read) {
@@ -71,13 +71,13 @@ export default function MessageComponent({
     });
   }
   let element = (
-    <div className={classes}>
+    <div className={classes} key={message.id}>
       <div className="col-xs-1">
         <div className="row">
           <div className="col-xs-2">
             <input
               type="checkbox"
-              checked={checked}
+              defaultChecked={checked}
               onClick={onSelectMessageClick}
             />
           </div>

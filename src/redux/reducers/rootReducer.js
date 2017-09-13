@@ -78,32 +78,51 @@ export default function rootReducer(
     case 'ON_MARK_READ_SELECTED':
       return {
         ...currentState,
-        messages: action.array
+        messages: currentState.messages.map(
+          message =>
+            message.id === action.message.id ? action.message : message
+        )
       };
     case 'ON_MARK_UNREAD_SELECTED':
       return {
         ...currentState,
-        messages: action.array
+        messages: currentState.messages.map(
+          message =>
+            message.id === action.message.id ? action.message : message
+        )
       };
     case 'ON_APPLY_LABEL':
       return {
         ...currentState,
-        messages: action.array
+        messages: currentState.messages.map(
+          message =>
+            message.id === action.message.id ? action.message : message
+        )
       };
     case 'ON_REMOVE_LABEL':
       return {
         ...currentState,
-        messages: action.array
+        messages: currentState.messages.map(
+          message =>
+            message.id === action.message.id ? action.message : message
+        )
       };
     case 'ON_DELETE_MESSAGE':
       return {
         ...currentState,
-        messages: action.array
+        messages: currentState.messages.filter(
+          message => message.id !== action.messageId
+        )
       };
     case 'ON_CREATE_MESSAGE':
       return {
         ...currentState,
-        messages: [...currentState.messages, action.message]
+        messages: [...currentState.messages, action.record],
+        selectedMessageIds: [
+          ...currentState.selectedMessageIds,
+          action.record.id
+        ],
+        selectedMessageCount: currentState.selectedMessageCount + 1
       };
     default:
       return currentState;

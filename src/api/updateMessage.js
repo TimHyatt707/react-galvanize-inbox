@@ -25,7 +25,7 @@ export default function updateMessage(messageId, changes) {
         subject: record.fields.subject,
         read: record.fields.read,
         starred: record.fields.starred,
-        labels: record.fields.labels.split('')
+        labels: record.fields.labels.split(',')
       };
     });
 }

@@ -13,9 +13,8 @@ export default function createMessage(message) {
       return response.json();
     })
     .then(record => {
-      console.log(record);
       return {
-        id: record.fields.id,
+        id: record.id,
         body: record.fields.body,
         subject: record.fields.subject,
         read: record.fields.read,
