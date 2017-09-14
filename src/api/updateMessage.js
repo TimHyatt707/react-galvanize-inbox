@@ -16,6 +16,7 @@ export default function updateMessage(messageId, changes) {
       return response.json();
     })
     .then(record => {
+      console.log(record);
       if (!record.fields.labels) {
         record.fields.labels = '';
       }

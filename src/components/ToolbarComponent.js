@@ -4,6 +4,7 @@ var classNames = require('classnames');
 export default function ToolbarComponent({
   messages,
   selectedMessageCount,
+  selectedMessageIds,
   onOpenComposeForm,
   onSelectAllMessages,
   onDeselectAllMessages,
@@ -11,7 +12,7 @@ export default function ToolbarComponent({
   onMarkAsUnreadSelectedMessages,
   onApplyLabelSelectedMessages,
   onRemoveLabelSelectedMessages,
-  onDeleteSelectedMessages
+  onDeleteSelectedMessage
 }) {
   let counter = 0;
   let classes;
@@ -25,21 +26,54 @@ export default function ToolbarComponent({
     }
   }
   function onMarkAsReadSelectedMessagesHandler() {
-    onMarkAsReadSelectedMessages();
+    let changes = {};
+    changes.read = true;
+    for (let i = 0; i < messages.length; i++) {
+      if (selectedMessageIds.indexOf(messages[i].id) !== -1) {
+        onMarkAsReadSelectedMessages(messages[i].id, changes);
+      }
+    }
   }
   function onMarkAsUnreadSelectedMessagesHandler() {
-    onMarkAsUnreadSelectedMessages();
+    let changes = {};
+    changes.read = false;
+    for (let i = 0; i < messages.length; i++) {
+      if (selectedMessageIds.indexOf(messages[i].id) !== -1) {
+        onMarkAsReadSelectedMessages(messages[i].id, changes);
+      }
+    }
   }
   function onApplyLabelSelectedMessagesHandler(event) {
     const $label = event.target;
-    onApplyLabelSelectedMessages($label.value);
+    let changes = {};
+    for (let i = 0; i < messages.length; i++) {
+      if (selectedMessageIds.indexOf(messages[i].id) !== -1) {
+        changes.labels = messages[i].labels;
+        changes.labels.push($label.value);
+        changes.labels = changes.labels.join(',');
+        onApplyLabelSelectedMessages(messages[i].id, changes);
+      }
+    }
   }
   function onRemoveLabelSelectedMessagesHandler(event) {
     const $label = event.target;
-    onRemoveLabelSelectedMessages($label.value);
+    let changes = {};
+    for (let i = 0; i < messages.length; i++) {
+      if (selectedMessageIds.indexOf(messages[i].id) !== -1) {
+        changes.labels = messages[i].labels;
+        let index = changes.labels.indexOf($label.value);
+        changes.labels.splice(index, 1);
+        changes.labels = changes.labels.join(',');
+        onRemoveLabelSelectedMessages(messages[i].id, changes);
+      }
+    }
   }
   function onDeleteSelectedMessagesHandler() {
-    onDeleteSelectedMessages();
+    for (let i = 0; i < messages.length; i++) {
+      if (selectedMessageIds.indexOf(messages[i].id) !== -1) {
+        onDeleteSelectedMessage(messages[i].id);
+      }
+    }
   }
   function onOpenComposeFormHandler() {
     onOpenComposeForm();

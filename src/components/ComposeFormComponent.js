@@ -10,9 +10,12 @@ export default function ComposeFormComponent({
     onCancel();
   }
   function onSubmitHandler(event) {
+    let obj = {};
     event.preventDefault();
     let $form = event.target;
-    onSubmit($form.subject.value);
+    obj.subject = $form.subject.value;
+    obj.body = $form.body.value;
+    onSubmit(obj);
   }
   if (!showComposeForm) {
     return null;

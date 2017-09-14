@@ -13,7 +13,9 @@ export default function MessageComponent({
   selectedMessageIds
 }) {
   function onMarkReadMessageClick() {
-    onMarkReadMessage(message.id);
+    let changes = {};
+    changes.read = true;
+    onMarkReadMessage(message.id, changes);
   }
   function onSelectMessageClick(event) {
     const $checkbox = event.target;
@@ -24,10 +26,13 @@ export default function MessageComponent({
     }
   }
   function onStarMessageClick() {
+    let changes = {};
     if (message.starred) {
-      onUnstarMessage(message.id);
+      changes.starred = false;
+      onUnstarMessage(message.id, changes);
     } else {
-      onStarMessage(message.id);
+      changes.starred = true;
+      onStarMessage(message.id, changes);
     }
   }
   // function onUnstarMessageClick() {

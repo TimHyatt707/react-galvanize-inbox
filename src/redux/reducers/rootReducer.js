@@ -10,7 +10,7 @@ export default function rootReducer(
   switch (action.type) {
     case 'SET_MESSAGES':
       return { ...currentState, messages: action.messages };
-    case 'ON_MARK_READ':
+    case 'ON_UPDATE':
       return {
         ...currentState,
         messages: currentState.messages.map(
@@ -37,22 +37,6 @@ export default function rootReducer(
         ),
         selectedMessageCount: deselectCounter - 1
       };
-    case 'ON_STAR':
-      return {
-        ...currentState,
-        messages: currentState.messages.map(
-          message =>
-            message.id === action.message.id ? action.message : message
-        )
-      };
-    case 'ON_UNSTAR':
-      return {
-        ...currentState,
-        messages: currentState.messages.map(
-          message =>
-            message.id === action.message.id ? action.message : message
-        )
-      };
     case 'OPEN_FORM':
       return {
         ...currentState,
@@ -66,7 +50,7 @@ export default function rootReducer(
     case 'ON_SELECT_ALL':
       return {
         ...currentState,
-        selectedMessageIds: action.array,
+        selectedMessageIds: currentState.messages.map(message => message.id),
         selectedMessageCount: currentState.messages.length
       };
     case 'ON_DESELECT_ALL':
@@ -74,38 +58,6 @@ export default function rootReducer(
         ...currentState,
         selectedMessageIds: [],
         selectedMessageCount: 0
-      };
-    case 'ON_MARK_READ_SELECTED':
-      return {
-        ...currentState,
-        messages: currentState.messages.map(
-          message =>
-            message.id === action.message.id ? action.message : message
-        )
-      };
-    case 'ON_MARK_UNREAD_SELECTED':
-      return {
-        ...currentState,
-        messages: currentState.messages.map(
-          message =>
-            message.id === action.message.id ? action.message : message
-        )
-      };
-    case 'ON_APPLY_LABEL':
-      return {
-        ...currentState,
-        messages: currentState.messages.map(
-          message =>
-            message.id === action.message.id ? action.message : message
-        )
-      };
-    case 'ON_REMOVE_LABEL':
-      return {
-        ...currentState,
-        messages: currentState.messages.map(
-          message =>
-            message.id === action.message.id ? action.message : message
-        )
       };
     case 'ON_DELETE_MESSAGE':
       return {
