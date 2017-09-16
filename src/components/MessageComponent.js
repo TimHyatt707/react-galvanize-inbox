@@ -4,7 +4,6 @@ var classNames = require('classnames');
 export default function MessageComponent({
   selected,
   message,
-  checked,
   onMarkReadMessage,
   onSelectMessage,
   onDeselectMessage,
@@ -40,6 +39,12 @@ export default function MessageComponent({
   // }
   let star;
   let classes;
+  let checked;
+  if (selected) {
+    checked = true;
+  } else {
+    checked = false;
+  }
   let labels = message.labels.map(i => {
     return (
       <span className="label label-warning" key={i}>
@@ -82,7 +87,7 @@ export default function MessageComponent({
           <div className="col-xs-2">
             <input
               type="checkbox"
-              defaultChecked={checked}
+              checked={checked}
               onClick={onSelectMessageClick}
             />
           </div>

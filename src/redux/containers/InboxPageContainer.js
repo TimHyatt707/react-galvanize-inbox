@@ -3,13 +3,7 @@ import { connect } from 'react-redux';
 
 import InboxPage from '../../components/InboxPage';
 import getMessagesProcess from './../thunks/getMessagesProcess';
-import markAsReadProcess from './../thunks/markAsReadProcess';
-import onStarProcess from './../thunks/onStarProcess';
-import onUnstarProcess from './../thunks/onUnstarProcess';
-import onMarkAsReadProcess from './../thunks/onMarkAsReadProcess';
-import onMarkAsUnreadProcess from './../thunks/onMarkAsUnreadProcess';
-import onApplyLabelProcess from './../thunks/onApplyLabelProcess';
-import onRemoveLabelProcess from './../thunks/onRemoveLabelProcess';
+import updateMessageProcess from './../thunks/updateMessageProcess';
 import DeleteMessageProcess from './../thunks/DeleteMessageProcess';
 import createMessageProcess from './../thunks/createMessageProcess';
 
@@ -26,24 +20,24 @@ function mapDispatchToProps(dispatch, ownProps) {
   return {
     onMount: () => dispatch(getMessagesProcess()),
     onMarkReadMessage: (messageId, changes) =>
-      dispatch(markAsReadProcess(messageId, changes)),
+      dispatch(updateMessageProcess(messageId, changes)),
     onSelectMessage: messageId => dispatch({ type: 'ON_SELECT', messageId }),
     onDeselectMessage: messageId =>
       dispatch({ type: 'ON_DESELECT', messageId }),
     onStarMessage: (messageId, changes) =>
-      dispatch(onStarProcess(messageId, changes)),
+      dispatch(updateMessageProcess(messageId, changes)),
     onUnstarMessage: (messageId, changes) =>
-      dispatch(onUnstarProcess(messageId, changes)),
+      dispatch(updateMessageProcess(messageId, changes)),
     onSelectAllMessages: () => dispatch({ type: 'ON_SELECT_ALL' }),
     onDeselectAllMessages: () => dispatch({ type: 'ON_DESELECT_ALL' }),
     onMarkAsReadSelectedMessages: (messageId, changes) =>
-      dispatch(onMarkAsReadProcess(messageId, changes)),
+      dispatch(updateMessageProcess(messageId, changes)),
     onMarkAsUnreadSelectedMessages: (messageId, changes) =>
-      dispatch(onMarkAsUnreadProcess(messageId, changes)),
+      dispatch(updateMessageProcess(messageId, changes)),
     onApplyLabelSelectedMessages: (messageId, changes) =>
-      dispatch(onApplyLabelProcess(messageId, changes)),
+      dispatch(updateMessageProcess(messageId, changes)),
     onRemoveLabelSelectedMessages: (messageId, changes) =>
-      dispatch(onRemoveLabelProcess(messageId, changes)),
+      dispatch(updateMessageProcess(messageId, changes)),
     onDeleteSelectedMessage: messageId =>
       dispatch(DeleteMessageProcess(messageId)),
     onOpenComposeForm: () => dispatch({ type: 'OPEN_FORM' }),
